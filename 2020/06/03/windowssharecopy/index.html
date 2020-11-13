@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>物随心</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="rudymemo,"> 
+    <meta name="description" content="物随心,"> 
+    
+    <link rel="alternative" href="atom.xml" title="物随心" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.ico"> 
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">windows脚本拷贝文件到共享文件夹</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">windows脚本拷贝文件到共享文件夹</h1>
+        <div class="stuff">
+            <span>六月 03, 2020</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <p>最近有一个需求：把用户上传的附件备份到局域网共享文件夹中。</p>
+<p>由于不是实时备份所以就打算每天凌晨把前一天上传的附件copy到共享文件夹中。具体思路就是先写bat脚本，然后创建计划任务。如果熟悉bat脚本的话写起来应该很简单，windows通过界面创建计划任务也不麻烦（没有Linux简单）。好了，思路有了，脚本写好了，计划任务也创建了，结果却失败了。。。</p>
+<p>​    开始我的做法是：</p>
+<ol>
+<li>编写bat脚本</li>
+<li>创建计划任务</li>
+<li>添加映射网络驱动器，把共享文件夹映射到本地磁盘目录</li>
+</ol>
+<p>找一下原因吧，搜索关键字（windows创建计划任务没有执行脚本），然后找到了原因。bat脚本在执行的时候需要利用NET USE连接共享文件夹得到授权才可以执行copy，手动映射的找不到路径，于是增加了两行代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 每次连接前需要先断开连接</span><br><span class="line">NET USE 本地地址 /delete</span><br><span class="line">// 取得授权保持连接</span><br><span class="line">NET USE 共享地址 本地地址 /PERSISTENT YES</span><br></pre></td></tr></table></figure>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="/music/Abundance of the Heart - Rachel Currea.mp3">
+            </audio>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment"
+        data-ae='true'
+        data-ci='97907f825d3f3e1f86a9'
+        data-cs='7036505292a06ee529c894375bca66cc6350d69a'
+        data-r='rudymemo.github.io'
+        data-o='rudymemo'
+        data-a='rudymemo'
+        data-d='false'
+    >查看评论</div>
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>

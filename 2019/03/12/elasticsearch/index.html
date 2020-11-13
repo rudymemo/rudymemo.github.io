@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>物随心</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="rudymemo,"> 
+    <meta name="description" content="物随心,"> 
+    
+    <link rel="alternative" href="atom.xml" title="物随心" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.ico"> 
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">elasticsearch单机版安装</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">elasticsearch单机版安装</h1>
+        <div class="stuff">
+            <span>三月 12, 2019</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <p>本文记录一下Elasticsearch单机版安装中遇到的问题：</p>
+<ul>
+<li><p>elasticsearch不可以用root用户启动</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">adduser 用户名 <span class="comment">//设置用户名</span></span><br><span class="line">passwd 用户名  <span class="comment">//设置密码</span></span><br><span class="line">chown -R 用户名：用户名 路径 <span class="comment">//设置权限</span></span><br><span class="line">su 用户名 <span class="comment">//可切换用户</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载安装包，解压安装</p>
+<p><a href="https://www.elastic.co/cn/start?elektra=home&amp;storm=banner" target="_blank" rel="noopener">官网下载链接</a></p>
+<p>linux利用wget下载安装包</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf elasticsearch-<span class="number">6.6</span>.1.tar.gz</span><br></pre></td></tr></table></figure>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started-install.html" target="_blank" rel="noopener">安装帮助文档</a></p>
+<p>进入bin目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd elasticsearch-6.6.1/bin</span><br></pre></td></tr></table></figure>
+<p>然后执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./elasticsearch</span><br></pre></td></tr></table></figure>
+<p>启动之后第一个问题：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N</span><br></pre></td></tr></table></figure>
+<p>在GitHub中搜索到了解决方案：<a href="https://github.com/elastic/elasticsearch/issues/22245" target="_blank" rel="noopener">elasticsearch-issues</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /elasticsearch-6.6.1/config/</span><br><span class="line">vi jvm.options</span><br></pre></td></tr></table></figure>
+<p>添加参数：-XX:-AssumeMP即可解决。</p>
+</li>
+<li><p>第二个问题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">max file descriptors [65535] for elasticsearch process is too low, increase to at least [65536]</span><br></pre></td></tr></table></figure>
+<p>切换到root用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/security/limits.conf</span><br></pre></td></tr></table></figure>
+<p>修改 </p>
+<p>* soft nofile 65536</p>
+<p>* hard nofile 65536</p>
+<p>保存之后切换到原用户</p>
+</li>
+<li><p>第三个问题</p>
+<p>单机版内存大小问题如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]</span><br></pre></td></tr></table></figure>
+<p>解决：</p>
+<p>切换到root用户</p>
+<p>执行命令：</p>
+<p>sysctl -w vm.max_map_count=262144</p>
+<p>查看结果：</p>
+<p>sysctl -a|grep vm.max_map_count</p>
+<p>显示：</p>
+<p>vm.max_map_count = 262144</p>
+<p>在此切换到之前的用户然后启动即可。</p>
+</li>
+<li><p>外网访问问题</p>
+<p>单机版安装启动成功之后根据端口号输入网址无法访问，经查原来默认只有本机可以访问，解决方法如下：</p>
+<p>修改elasticsearch.yml文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /elasticsearch-6.6.1/config/</span><br><span class="line">vi elasticsearch.yml</span><br></pre></td></tr></table></figure>
+<p>#network.host: 192.168.0.1</p>
+<p>修改为本机IP，去掉注释即可。</p>
+</li>
+</ul>
+<p><img src="/img/es/微信截图_20190312153937.png" alt=""></p>
+<p>至此单机版完成。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="/music/Memories - East Root.mp3">
+            </audio>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment"
+        data-ae='true'
+        data-ci='97907f825d3f3e1f86a9'
+        data-cs='7036505292a06ee529c894375bca66cc6350d69a'
+        data-r='rudymemo.github.io'
+        data-o='rudymemo'
+        data-a='rudymemo'
+        data-d='false'
+    >查看评论</div>
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>

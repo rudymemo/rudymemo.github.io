@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>物随心</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="rudymemo,"> 
+    <meta name="description" content="物随心,"> 
+    
+    <link rel="alternative" href="atom.xml" title="物随心" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.ico"> 
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">rabbitMQ安装</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">rabbitMQ安装</h1>
+        <div class="stuff">
+            <span>十月 23, 2018</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <p>系统版本：</p>
+<p><img src="/img/rabbitMQ/微信图片_20190225153504.png" alt=""></p>
+<p><a href="http://www.rabbitmq.com/install-rpm.html" target="_blank" rel="noopener">官网安装说明</a></p>
+<p>按照官网说明安装的是最新版本的，中间踩过不少坑，缺少的gcc以及socat就不说了，安装就行了，我的最终结果如下图：</p>
+<p><img src="/img/rabbitMQ/微信图片_20190225154006.png" alt=""></p>
+<p><img src="/img/rabbitMQ/微信图片_20190225154010.png" alt=""></p>
+<p>我是很无语，最终选择放弃。</p>
+<hr>
+<p>改用下面两个版本进行安装：</p>
+<ul>
+<li>wget <a href="http://www.rabbitmq.com/releases/rabbitmq-server/v3.5.0/rabbitmq-server-3.5.0-1.noarch.rpm" target="_blank" rel="noopener">http://www.rabbitmq.com/releases/rabbitmq-server/v3.5.0/rabbitmq-server-3.5.0-1.noarch.rpm</a></li>
+<li>wget <a href="http://www.rabbitmq.com/releases/erlang/erlang-19.0.4-1.el7.centos.x86_64.rpm" target="_blank" rel="noopener">http://www.rabbitmq.com/releases/erlang/erlang-19.0.4-1.el7.centos.x86_64.rpm</a></li>
+<li>rpm -ivh erlang-19.04-1.e17.centos.x86_64.rpm</li>
+<li>rmp -ivh rabbitmq-server-3.5.0-1.noarch.rpm</li>
+</ul>
+<p>以上安装顺利，下面就是检查安装以及启动等。</p>
+<ul>
+<li>service rabbitmq-server start 启动</li>
+<li>service rabbitmq-server stop 停止</li>
+<li>其他快捷方式可自行查阅</li>
+</ul>
+<p>然后访问 ip:15672，发现无法打开，官网有说明：</p>
+<p><img src="/img/rabbitMQ/微信图片_20190225155615.png" alt=""></p>
+<p>打开 <a href="http://www.rabbitmq.com/management.html" target="_blank" rel="noopener">http://www.rabbitmq.com/management.html</a> 可以看到命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_management</span><br></pre></td></tr></table></figure>
+<p>执行之后即可。</p>
+<p>默认用户名密码：guest/guest，只不过guest用户只能在localhost下访问（为了安全），可以更改配置文件将ebin目录下rabbit.app中loopback_users里的&lt;&lt;”guest”&gt;&gt;删除（不建议，现在我主要是以启动进入为目的，后面再好好研究）。</p>
+<p><img src="/img/rabbitMQ/微信截图_20190225160240.png" alt=""></p>
+<p>可以看到已经成功进入。</p>
+<p>待续。。。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="/music/Olimpica - Roberto Cacciapaglia.mp3">
+            </audio>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment"
+        data-ae='true'
+        data-ci='97907f825d3f3e1f86a9'
+        data-cs='7036505292a06ee529c894375bca66cc6350d69a'
+        data-r='rudymemo.github.io'
+        data-o='rudymemo'
+        data-a='rudymemo'
+        data-d='false'
+    >查看评论</div>
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
