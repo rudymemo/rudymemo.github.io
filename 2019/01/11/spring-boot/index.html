@@ -1,15 +1,15 @@
 
 <!DOCTYPE html>
 <html lang="zh-CN" class="loading">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>物随心</title>
 
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="google" content="notranslate" />
+    <meta name="google" content="notranslate">
     <meta name="keywords" content="rudymemo,"> 
     <meta name="description" content="物随心,"> 
     
@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="/css/diaspora.css">
     <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 </head>
-
+</html>
 <body class="loading">
     <div id="loader"></div>
     <div id="single">
@@ -61,11 +61,11 @@
 <li><p>spring-boot 如何内嵌tomcat然后启动的</p>
 <p>首先tomcat是通过JAVA语言开发的，tomcat发行了很多jar包版本，spring-boot通过集成jar包把tomcat依赖到项目中（可通过maven库搜索）。</p>
 <p>启动tomcat，在idea中找到TomcatWebServer类，然后断点调试如下图：</p>
-<p><img src="/img/springboot/tomcat_20190306114739.png" alt=""></p>
+<p><img src="/img/springboot/tomcat_20190306114739.png" alt></p>
 <p>可以一直往上找，找到getWebServer方法可以看到tomcat的实例化写法，如下图：</p>
-<p><img src="/img/springboot/tomcat_20190306115059.png" alt=""></p>
+<p><img src="/img/springboot/tomcat_20190306115059.png" alt></p>
 <p>可以看到tomcat是通过new Tomcat()来进行实例化的。tomcat得到之后再来看initialize()方法，如下图：</p>
-<p><img src="/img/springboot/tomcat_20190306115400.png" alt=""></p>
+<p><img src="/img/springboot/tomcat_20190306115400.png" alt></p>
 <p>然后调用this.tomcat.start()方法来启动tomcat。</p>
 </li>
 <li></li>
