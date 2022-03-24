@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>物随心</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="rudymemo,"> 
+    <meta name="description" content="物随心,"> 
+    
+    <link rel="alternative" href="atom.xml" title="物随心" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.ico"> 
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">GitHub个人网站修改DNS，解决国内访问慢的问题</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">GitHub个人网站修改DNS，解决国内访问慢的问题</h1>
+        <div class="stuff">
+            <span>九月 26, 2019</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <p>首先你要有一个GitHub的个人网站（^_^），这个后续写一下利用GitHub创建个人网站以及域名解析。</p>
+<p>DNS我选的是<a href="https://www.cloudflare.com/" target="_blank" rel="noopener">cloudflare</a>，具体注册流程就不写了。</p>
+<ul>
+<li>首先添加站点：</li>
+</ul>
+<p><img src="/img/github/QQ截图20190926151806.jpg" alt=""></p>
+<p><img src="/img/github/QQ截图20190926152457.jpg" alt=""></p>
+<ul>
+<li>选择Free，然后Confirm plan</li>
+</ul>
+<p><img src="/img/github/微信图片_20190926152719.png" alt=""></p>
+<ul>
+<li>添加解析，如下图：</li>
+</ul>
+<p><img src="/img/github/微信图片_20190926152148.png" alt=""></p>
+<ul>
+<li>然后continue</li>
+</ul>
+<p><img src="/img/github/QQ截图20190926152854.jpg" alt=""></p>
+<p>这个就是需要去域名注册商删除现在的第一步提示的DNS记录，然后替换成Nameserver1和Nameserver2。</p>
+<p>去阿里云修改DNS，<a href="https://help.aliyun.com/document_detail/54157.html?spm=a2c4g.11186623.2.13.4aac538faj1K3B" target="_blank" rel="noopener">具体方式请点击阿里官方链接参考</a>。</p>
+<p>修改完成之后等待结果，一般修改正确很快就可以了，成功入下图所示：</p>
+<p><img src="/img/github/QQ截图20190926153406.jpg" alt=""></p>
+<ul>
+<li>问了几个朋友访问都很快</li>
+</ul>
+<p><img src="/img/github/微信图片_20190926153505.png" alt=""></p>
+<p><img src="/img/github/微信图片_20190926153523.png" alt=""></p>
+<p>缓存后更快，几乎秒开。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="/music/Letting Go - Paul Cardall.mp3">
+            </audio>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment"
+        data-ae='true'
+        data-ci='97907f825d3f3e1f86a9'
+        data-cs='7036505292a06ee529c894375bca66cc6350d69a'
+        data-r='rudymemo.github.io'
+        data-o='rudymemo'
+        data-a='rudymemo'
+        data-d='false'
+    >查看评论</div>
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
