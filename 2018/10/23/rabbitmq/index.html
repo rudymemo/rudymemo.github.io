@@ -52,11 +52,11 @@
         </div>
         <div class="content markdown">
             <p>系统版本：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/202204261110126.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/img/202204261110126.png" alt=""></p>
 <p><a href="http://www.rabbitmq.com/install-rpm.html" target="_blank" rel="noopener">官网安装说明</a></p>
 <p>按照官网说明安装的是最新版本的，中间踩过不少坑，缺少的gcc以及socat就不说了，安装就行了，我的最终结果如下图：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/202204261110265.png" alt=""></p>
-<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/202204261110199.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/img/202204261110265.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/img/202204261110199.png" alt=""></p>
 <p>我是很无语，最终选择放弃。</p>
 <hr>
 <p>改用下面两个版本进行安装：</p>
@@ -78,7 +78,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_management</span><br></pre></td></tr></table></figure>
 <p>执行之后即可。</p>
 <p>默认用户名密码：guest/guest，只不过guest用户只能在localhost下访问（为了安全），可以更改配置文件将ebin目录下rabbit.app中loopback_users里的&lt;&lt;”guest”&gt;&gt;删除（不建议，现在我主要是以启动进入为目的，后面再好好研究）。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/202204261110400.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/img/202204261110400.png" alt=""></p>
 <p>可以看到已经成功进入。</p>
 <p>待续。。。</p>
 

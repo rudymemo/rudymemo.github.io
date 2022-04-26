@@ -61,11 +61,11 @@
 <li><p>spring-boot 如何内嵌tomcat然后启动的</p>
 <p>首先tomcat是通过JAVA语言开发的，tomcat发行了很多jar包版本，spring-boot通过集成jar包把tomcat依赖到项目中（可通过maven库搜索）。</p>
 <p>启动tomcat，在idea中找到TomcatWebServer类，然后断点调试如下图：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/202204261109258.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/img/202204261109258.png" alt=""></p>
 <p>可以一直往上找，找到getWebServer方法可以看到tomcat的实例化写法，如下图：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/202204261109881.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/img/202204261109881.png" alt=""></p>
 <p>可以看到tomcat是通过new Tomcat()来进行实例化的。tomcat得到之后再来看initialize()方法，如下图：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/202204261109049.png" alt=""></p>
+<p><img src="https://cdn.jsdelivr.net/gh/rudymemo/picx.xpoet.cn/img/202204261109049.png" alt=""></p>
 <p>然后调用this.tomcat.start()方法来启动tomcat。</p>
 </li>
 <li></li>
