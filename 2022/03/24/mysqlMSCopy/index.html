@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>物随心</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="rudymemo,"> 
+    <meta name="description" content="物随心,"> 
+    
+    <link rel="alternative" href="atom.xml" title="物随心" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.ico"> 
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">mysql主主复制</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">mysql主主复制</h1>
+        <div class="stuff">
+            <span>三月 24, 2022</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <h4>1. 介绍</h4>
+
+<ul>
+<li><h6 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h6><blockquote>
+<p>两台服务器互为主从，可以互相数据同步数据。</p>
+</blockquote>
+</li>
+<li><h6 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h6><blockquote>
+<p>同时操作相同内容时可能导致数据不一致。</p>
+</blockquote>
+</li>
+</ul>
+<h4>2. 环境搭建</h4>
+
+<ul>
+<li><h6 id="准备两台虚拟机，环境保持一致"><a href="#准备两台虚拟机，环境保持一致" class="headerlink" title="准备两台虚拟机，环境保持一致"></a>准备两台虚拟机，环境保持一致</h6><h6 id="我选择的服务器是-CentOS-8-3，数据库版本-MySQL-5-7。"><a href="#我选择的服务器是-CentOS-8-3，数据库版本-MySQL-5-7。" class="headerlink" title="我选择的服务器是 CentOS 8.3，数据库版本 MySQL 5.7。"></a>我选择的服务器是 CentOS 8.3，数据库版本 MySQL 5.7。</h6><h6 id="下载-CentOS8-3-镜像，使用-VMware-Workstation-Pro-安装，只需要安装一次就可以了，另外一个可以直接复制已安装好的虚拟机。"><a href="#下载-CentOS8-3-镜像，使用-VMware-Workstation-Pro-安装，只需要安装一次就可以了，另外一个可以直接复制已安装好的虚拟机。" class="headerlink" title="下载 CentOS8.3 镜像，使用 VMware Workstation Pro 安装，只需要安装一次就可以了，另外一个可以直接复制已安装好的虚拟机。"></a>下载 CentOS8.3 镜像，使用 VMware Workstation Pro 安装，只需要安装一次就可以了，另外一个可以直接复制已安装好的虚拟机。</h6></li>
+<li><h6 id="下载并安装MySQL官方的-Yum-Repository"><a href="#下载并安装MySQL官方的-Yum-Repository" class="headerlink" title="下载并安装MySQL官方的 Yum Repository"></a>下载并安装MySQL官方的 Yum Repository</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># wget -i -c http://dev.mysql.com/get/mysql57-community-release-el7-10.noarch.rpm</span></span><br><span class="line"></span><br><span class="line">[root@localhost ~]<span class="comment"># yum -y install mysql57-community-release-el7-10.noarch.rpm</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装命令之前需要先关闭 mysql 模块</span></span><br><span class="line">[root@localhost ~]<span class="comment"># yum module disable mysql</span></span><br><span class="line"></span><br><span class="line">[root@localhost ~]<span class="comment"># yum -y install mysql-community-server</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><h6 id="安装完成之后设置开机启动，然后启动数据库"><a href="#安装完成之后设置开机启动，然后启动数据库" class="headerlink" title="安装完成之后设置开机启动，然后启动数据库"></a>安装完成之后设置开机启动，然后启动数据库</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># systemctl enable mysqld.service</span></span><br><span class="line"></span><br><span class="line">[root@localhost ~]<span class="comment"># systemctl start mysqld.service</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><h6 id="启动之后登录修改密码，root-密码可以通过-mysqld-log-查看到一串临时密码"><a href="#启动之后登录修改密码，root-密码可以通过-mysqld-log-查看到一串临时密码" class="headerlink" title="启动之后登录修改密码，root 密码可以通过 mysqld.log 查看到一串临时密码"></a>启动之后登录修改密码，root 密码可以通过 mysqld.log 查看到一串临时密码</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# grep "password" /var/log/mysqld.log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 登录 mysql</span></span><br><span class="line">[root@localhost ~]# mysql -uroot -p</span><br><span class="line">[root@localhost ~]# Enter password: 这里粘贴刚才临时密码</span><br><span class="line"><span class="meta">#</span><span class="bash"> 修改 root 密码，需要字母数字大小写特殊字符才可以修改成功</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">ALTER USER <span class="string">'root'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'passwd'</span>;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 开启远程访问 <span class="string">'%'</span> 代表所有用户，也可以是某一个 IP 地址</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">grant all privileges on *.* to <span class="string">'root'</span>@<span class="string">'%'</span> identified by <span class="string">'passwd'</span> with grant option;</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 执行刷新命令</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">flush privileges;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><h6 id="数据库调整之后，还需要防火墙放开3306端口"><a href="#数据库调整之后，还需要防火墙放开3306端口" class="headerlink" title="数据库调整之后，还需要防火墙放开3306端口"></a>数据库调整之后，还需要防火墙放开3306端口</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# firewall-cmd --zone=public --add-port=3306/tcp --permanent</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><h6 id="修改数据库编码方式修改，编辑-my-cnf-文件，增加开头两行以及结尾两行代码"><a href="#修改数据库编码方式修改，编辑-my-cnf-文件，增加开头两行以及结尾两行代码" class="headerlink" title="修改数据库编码方式修改，编辑 my.cnf 文件，增加开头两行以及结尾两行代码"></a>修改数据库编码方式修改，编辑 my.cnf 文件，增加开头两行以及结尾两行代码</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vi /etc/my.cnf</span><br><span class="line">[client]</span><br><span class="line">default-character-set=utf8</span><br><span class="line"><span class="meta">#</span><span class="bash"> For advice on how to change settings please see</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> http://dev.mysql.com/doc/refman/5.7/en/server-configuration-defaults.html</span></span><br><span class="line"></span><br><span class="line">[mysqld]</span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Remove leading <span class="comment"># and set to the amount of RAM for the most important data</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> cache <span class="keyword">in</span> MySQL. Start at 70% of total RAM <span class="keyword">for</span> dedicated server, <span class="keyword">else</span> 10%.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> innodb_buffer_pool_size = 128M</span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Remove leading <span class="comment"># to turn on a very important data integrity option: logging</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> changes to the binary <span class="built_in">log</span> between backups.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> log_bin</span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Remove leading <span class="comment"># to set options mainly useful for reporting servers.</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> The server defaults are faster <span class="keyword">for</span> transactions and fast SELECTs.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Adjust sizes as needed, experiment to find the optimal values.</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> join_buffer_size = 128M</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> sort_buffer_size = 2M</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> read_rnd_buffer_size = 2M</span></span><br><span class="line">datadir=/var/lib/mysql</span><br><span class="line">socket=/var/lib/mysql/mysql.sock</span><br><span class="line">character-set-server=utf8</span><br><span class="line">collation-server=utf8_general_ci</span><br><span class="line"></span><br><span class="line">[root@localhost ~]# systemctl restart mysqld</span><br></pre></td></tr></table></figure>
+<h6 id="测试连接数据库可以连接成功，至此一台环境已经搭建完成，然后复制虚拟机即可完成另外一台。"><a href="#测试连接数据库可以连接成功，至此一台环境已经搭建完成，然后复制虚拟机即可完成另外一台。" class="headerlink" title="测试连接数据库可以连接成功，至此一台环境已经搭建完成，然后复制虚拟机即可完成另外一台。"></a>测试连接数据库可以连接成功，至此一台环境已经搭建完成，然后复制虚拟机即可完成另外一台。</h6></li>
+</ul>
+<h4>3. 主主复制实现</h4>
+
+<ul>
+<li><h6 id="第一台主服务器配置"><a href="#第一台主服务器配置" class="headerlink" title="第一台主服务器配置"></a>第一台主服务器配置</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vi /etc/my.cnf</span><br><span class="line">server-id=1/ / 注意两台服务器 server-id 不一样</span><br><span class="line">auto_increment_increment=2 // 增长幅度</span><br><span class="line">auto_increment_offset=1 // 开始点，第一台从 1 开始，第二台从 2 开始。</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 登录到 mysql</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">grant replication slave on *.* to <span class="string">'root'</span>@<span class="string">'192.168.20.134'</span> identified by <span class="string">'passwd'</span>;</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">show master status;</span></span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| mysql-bin.000004 |      154 |              |                  |                   |</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">change master to    </span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_host=<span class="string">'192.168.1.134'</span></span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_user=<span class="string">'root'</span></span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_password=<span class="string">'passwd'</span></span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_log_file=<span class="string">'mysql-bin.000004'</span></span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_log_pos=154;</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">start slave;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><h6 id="第二台主服务器配置"><a href="#第二台主服务器配置" class="headerlink" title="第二台主服务器配置"></a>第二台主服务器配置</h6><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vi /etc/my.cnf</span><br><span class="line">server-id=2 // 注意两台服务器 server-id 不一样</span><br><span class="line">auto_increment_increment=2 // 增长幅度</span><br><span class="line">auto_increment_offset=2 // 开始点</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 登录到 mysql</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">grant replication slave on *.* to <span class="string">'root'</span>@<span class="string">'192.168.20.128'</span> identified by <span class="string">'passwd'</span>;</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">show master status;</span></span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| mysql-bin.000004 |      154 |              |                  |                   |</span><br><span class="line">+------------------+----------+--------------+------------------+-------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">change master to    </span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_host=<span class="string">'192.168.1.128'</span></span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_user=<span class="string">'root'</span></span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_password=<span class="string">'passwd'</span></span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_log_file=<span class="string">'mysql-bin.000004'</span></span></span><br><span class="line"><span class="meta">	-&gt;</span><span class="bash">master_log_pos=154;</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash">start slave;</span></span><br></pre></td></tr></table></figure>
+<h6 id="到此两台服务器主主复制配置完成。"><a href="#到此两台服务器主主复制配置完成。" class="headerlink" title="到此两台服务器主主复制配置完成。"></a>到此两台服务器主主复制配置完成。</h6></li>
+</ul>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="/music/Sunny Choi - Happily Ever After.mp3">
+            </audio>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment"
+        data-ae='true'
+        data-ci='97907f825d3f3e1f86a9'
+        data-cs='7036505292a06ee529c894375bca66cc6350d69a'
+        data-r='rudymemo.github.io'
+        data-o='rudymemo'
+        data-a='rudymemo'
+        data-d='false'
+    >查看评论</div>
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
