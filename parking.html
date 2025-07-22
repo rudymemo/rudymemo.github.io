@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能停车费计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .form-section {
+            padding: 40px;
+            background: #f8fafc;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 1.1em;
+        }
+        
+        .time-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .time-input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+        
+        .move-count-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .move-count-group label {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        .move-count-group input[type="radio"] {
+            display: none;
+        }
+        
+        .move-count-group input[type="radio"]:checked + label {
+            background: #4facfe;
+            color: white;
+            border-color: #4facfe;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results {
+            padding: 40px;
+            background: white;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .result-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        
+        .result-card .cost {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .schedule {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        .schedule h3 {
+            color: #374151;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #4facfe, #00f2fe);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #4facfe;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+        
+        .timeline-item.move::before {
+            background: #f5576c;
+        }
+        
+        .timeline-item.paid::before {
+            background: #fbbf24;
+        }
+        
+        .time-range {
+            font-weight: 600;
+            color: #4facfe;
+        }
+        
+        .move-action {
+            color: #f5576c;
+            font-weight: 600;
+        }
+        
+        .cost-info {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 智能停车费计算器</h1>
+            <p>帮你找到最省钱的挪车方案</p>
+        </div>
+        
+        <div class="form-section">
+            <div class="form-group">
+                <label for="arrivalTime">到达时间：</label>
+                <input type="time" id="arrivalTime" class="time-input" value="09:20">
+            </div>
+            
+            <div class="form-group">
+                <label for="departureTime">离开时间：</label>
+                <input type="time" id="departureTime" class="time-input" value="18:20">
+            </div>
+            
+            <div class="form-group">
+                <label>愿意挪车次数：</label>
+                <div class="move-count-group">
+                    <input type="radio" id="move0" name="moveCount" value="0">
+                    <label for="move0">不挪车</label>
+                    
+                    <input type="radio" id="move1" name="moveCount" value="1">
+                    <label for="move1">1次</label>
+                    
+                    <input type="radio" id="move2" name="moveCount" value="2">
+                    <label for="move2">2次</label>
+                    
+                    <input type="radio" id="move3" name="moveCount" value="3" checked>
+                    <label for="move3">3次</label>
+                    
+                    <input type="radio" id="move4" name="moveCount" value="4">
+                    <label for="move4">4次</label>
+                </div>
+            </div>
+            
+            <button class="calculate-btn" onclick="calculate()">💡 计算最优方案</button>
+        </div>
+        
+        <div class="results" id="results">
+            <div class="result-card">
+                <h3>💰 最优方案</h3>
+                <div class="cost" id="totalCost">0元</div>
+                <p id="costDescription">为您节省停车费用</p>
+            </div>
+            
+            <div class="schedule">
+                <h3>📅 详细时间安排</h3>
+                <div class="timeline" id="timeline">
+                    <!-- 时间线将由JavaScript生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function timeToMinutes(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function minutesToTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+        }
+
+        function calculateOptimalSchedule(arrivalMinutes, departureMinutes, maxMoves) {
+            const totalMinutes = departureMinutes - arrivalMinutes;
+            const freeMinutes = 3 * 60; // 3小时免费
+            const extraFreeMinutes = 30; // 超时后30分钟免费
+            
+            if (totalMinutes <= freeMinutes + extraFreeMinutes) {
+                // 总时间不超过3.5小时，完全免费
+                return {
+                    cost: 0,
+                    schedule: [
+                        {
+                            start: arrivalMinutes,
+                            end: departureMinutes,
+                            type: 'free',
+                            description: '完全免费停车'
+                        }
+                    ]
+                };
+            }
+            
+            let bestCost = Infinity;
+            let bestSchedule = null;
+            
+            // 尝试不同的挪车方案
+            for (let moves = 0; moves <= maxMoves; moves++) {
+                const schedule = [];
+                let currentTime = arrivalMinutes;
+                let remainingFree = freeMinutes;
+                let totalCost = 0;
+                
+                // 先使用3小时免费时间
+                if (remainingFree > 0) {
+                    const useTime = Math.min(remainingFree, departureMinutes - currentTime);
+                    schedule.push({
+                        start: currentTime,
+                        end: currentTime + useTime,
+                        type: 'free',
+                        description: '每日3小时免费时间'
+                    });
+                    currentTime += useTime;
+                    remainingFree -= useTime;
+                }
+                
+                if (currentTime >= departureMinutes) {
+                    if (totalCost < bestCost) {
+                        bestCost = totalCost;
+                        bestSchedule = schedule;
+                    }
+                    continue;
+                }
+                
+                // 使用超时后30分钟免费
+                if (currentTime < departureMinutes) {
+                    const useTime = Math.min(extraFreeMinutes, departureMinutes - currentTime);
+                    schedule.push({
+                        start: currentTime,
+                        end: currentTime + useTime,
+                        type: 'free',
+                        description: '超时后30分钟免费'
+                    });
+                    currentTime += useTime;
+                }
+                
+                // 计算剩余时间和挪车策略
+                const remainingTime = departureMinutes - currentTime;
+                if (remainingTime <= 0) {
+                    if (totalCost < bestCost) {
+                        bestCost = totalCost;
+                        bestSchedule = schedule;
+                    }
+                    continue;
+                }
+                
+                if (moves === 0) {
+                    // 不挪车，直接付费到底
+                    const paidHours = Math.ceil(remainingTime / 60);
+                    totalCost += paidHours * 4;
+                    schedule.push({
+                        start: currentTime,
+                        end: departureMinutes,
+                        type: 'paid',
+                        description: `付费停车 ${paidHours} 小时 (${paidHours * 4}元)`
+                    });
+                } else {
+                    // 有挪车次数，分配时间段
+                    const segments = moves + 1;
+                    const segmentTime = remainingTime / segments;
+                    
+                    for (let i = 0; i < segments; i++) {
+                        const segmentStart = currentTime + i * segmentTime;
+                        const segmentEnd = i === segments - 1 ? departureMinutes : segmentStart + segmentTime;
+                        
+                        if (i > 0) {
+                            // 挪车重新进入
+                            schedule.push({
+                                start: segmentStart,
+                                end: segmentStart,
+                                type: 'move',
+                                description: `第${i}次挪车重新进入`
+                            });
+                            
+                            // 重新进入后30分钟免费
+                            const freeEnd = Math.min(segmentStart + 30, segmentEnd);
+                            if (freeEnd > segmentStart) {
+                                schedule.push({
+                                    start: segmentStart,
+                                    end: freeEnd,
+                                    type: 'free',
+                                    description: '重新进入30分钟免费'
+                                });
+                            }
+                            
+                            // 剩余时间付费
+                            if (segmentEnd > freeEnd) {
+                                const paidTime = segmentEnd - freeEnd;
+                                const paidHours = Math.ceil(paidTime / 60);
+                                totalCost += paidHours * 4;
+                                schedule.push({
+                                    start: freeEnd,
+                                    end: segmentEnd,
+                                    type: 'paid',
+                                    description: `付费停车 ${paidHours} 小时 (${paidHours * 4}元)`
+                                });
+                            }
+                        } else {
+                            // 第一段直接付费
+                            const paidTime = segmentEnd - segmentStart;
+                            const paidHours = Math.ceil(paidTime / 60);
+                            totalCost += paidHours * 4;
+                            schedule.push({
+                                start: segmentStart,
+                                end: segmentEnd,
+                                type: 'paid',
+                                description: `付费停车 ${paidHours} 小时 (${paidHours * 4}元)`
+                            });
+                        }
+                    }
+                }
+                
+                if (totalCost < bestCost) {
+                    bestCost = totalCost;
+                    bestSchedule = schedule;
+                }
+            }
+            
+            return {
+                cost: bestCost,
+                schedule: bestSchedule || []
+            };
+        }
+
+        function calculate() {
+            const arrivalTime = document.getElementById('arrivalTime').value;
+            const departureTime = document.getElementById('departureTime').value;
+            const moveCount = parseInt(document.querySelector('input[name="moveCount"]:checked').value);
+            
+            if (!arrivalTime || !departureTime) {
+                alert('请输入完整的时间信息');
+                return;
+            }
+            
+            const arrivalMinutes = timeToMinutes(arrivalTime);
+            const departureMinutes = timeToMinutes(departureTime);
+            
+            if (departureMinutes <= arrivalMinutes) {
+                alert('离开时间必须晚于到达时间');
+                return;
+            }
+            
+            const result = calculateOptimalSchedule(arrivalMinutes, departureMinutes, moveCount);
+            
+            // 显示结果
+            document.getElementById('totalCost').textContent = result.cost + '元';
+            document.getElementById('costDescription').textContent = 
+                result.cost === 0 ? '🎉 恭喜！完全免费停车' : `为您优化停车费用，共需${result.cost}元`;
+            
+            // 生成时间线
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
+            
+            result.schedule.forEach(item => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = `timeline-item ${item.type}`;
+                
+                if (item.type === 'move') {
+                    timelineItem.innerHTML = `
+                        <div class="move-action">🚗 ${minutesToTime(item.start)} - ${item.description}</div>
+                    `;
+                } else {
+                    timelineItem.innerHTML = `
+                        <div class="time-range">${minutesToTime(item.start)} - ${minutesToTime(item.end)}</div>
+                        <div class="${item.type === 'paid' ? 'cost-info' : ''}">${item.description}</div>
+                    `;
+                }
+                
+                timeline.appendChild(timelineItem);
+            });
+            
+            // 显示结果区域
+            document.getElementById('results').classList.add('show');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
