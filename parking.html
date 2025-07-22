@@ -322,21 +322,17 @@
             for (let moves = 0; moves <= maxMoves; moves++) {
                 const schedule = [];
                 let currentTime = arrivalMinutes;
-                let remainingFree = freeMinutes;
                 let totalCost = 0;
                 
                 // 先使用3小时免费时间
-                if (remainingFree > 0) {
-                    const useTime = Math.min(remainingFree, departureMinutes - currentTime);
-                    schedule.push({
-                        start: currentTime,
-                        end: currentTime + useTime,
-                        type: 'free',
-                        description: '每日3小时免费时间'
-                    });
-                    currentTime += useTime;
-                    remainingFree -= useTime;
-                }
+                const freeEndTime = Math.min(arrivalMinutes + freeMinutes, departureMinutes);
+                schedule.push({
+                    start: arrivalMinutes,
+                    end: freeEndTime,
+                    type: 'free',
+                    description: '每日3小时免费时间'
+                });
+                currentTime = freeEndTime;
                 
                 if (currentTime >= departureMinutes) {
                     if (totalCost < bestCost) {
@@ -347,20 +343,18 @@
                 }
                 
                 // 使用超时后30分钟免费
-                if (currentTime < departureMinutes) {
-                    const useTime = Math.min(extraFreeMinutes, departureMinutes - currentTime);
-                    schedule.push({
-                        start: currentTime,
-                        end: currentTime + useTime,
-                        type: 'free',
-                        description: '超时后30分钟免费'
-                    });
-                    currentTime += useTime;
-                }
+                const extraFreeEndTime = Math.min(currentTime + extraFreeMinutes, departureMinutes);
+                schedule.push({
+                    start: currentTime,
+                    end: extraFreeEndTime,
+                    type: 'free',
+                    description: '超时后30分钟免费'
+                });
+                currentTime = extraFreeEndTime;
                 
-                // 计算剩余时间和挪车策略
-                const remainingTime = departureMinutes - currentTime;
-                if (remainingTime <= 0) {
+                // 计算剩余时间
+                const remainingMinutes = departureMinutes - currentTime;
+                if (remainingMinutes <= 0) {
                     if (totalCost < bestCost) {
                         bestCost = totalCost;
                         bestSchedule = schedule;
@@ -370,7 +364,7 @@
                 
                 if (moves === 0) {
                     // 不挪车，直接付费到底
-                    const paidHours = Math.ceil(remainingTime / 60);
+                    const paidHours = Math.ceil(remainingMinutes / 60);
                     totalCost += paidHours * 4;
                     schedule.push({
                         start: currentTime,
@@ -379,16 +373,15 @@
                         description: `付费停车 ${paidHours} 小时 (${paidHours * 4}元)`
                     });
                 } else {
-                    // 有挪车次数，分配时间段
-                    const segments = moves + 1;
-                    const segmentTime = remainingTime / segments;
+                    // 计算最优挪车时间点
+                    const moveInterval = Math.floor(remainingMinutes / (moves + 1));
                     
-                    for (let i = 0; i < segments; i++) {
-                        const segmentStart = currentTime + i * segmentTime;
-                        const segmentEnd = i === segments - 1 ? departureMinutes : segmentStart + segmentTime;
+                    for (let i = 0; i < moves + 1; i++) {
+                        const segmentStart = currentTime + i * moveInterval;
+                        const segmentEnd = i === moves ? departureMinutes : currentTime + (i + 1) * moveInterval;
                         
                         if (i > 0) {
-                            // 挪车重新进入
+                            // 挪车
                             schedule.push({
                                 start: segmentStart,
                                 end: segmentStart,
@@ -405,30 +398,30 @@
                                     type: 'free',
                                     description: '重新进入30分钟免费'
                                 });
-                            }
-                            
-                            // 剩余时间付费
-                            if (segmentEnd > freeEnd) {
-                                const paidTime = segmentEnd - freeEnd;
-                                const paidHours = Math.ceil(paidTime / 60);
-                                totalCost += paidHours * 4;
-                                schedule.push({
-                                    start: freeEnd,
-                                    end: segmentEnd,
-                                    type: 'paid',
-                                    description: `付费停车 ${paidHours} 小时 (${paidHours * 4}元)`
-                                });
+                                
+                                // 剩余时间付费
+                                if (segmentEnd > freeEnd) {
+                                    const paidMinutes = segmentEnd - freeEnd;
+                                    const paidHours = Math.ceil(paidMinutes / 60);
+                                    totalCost += paidHours * 4;
+                                    schedule.push({
+                                        start: freeEnd,
+                                        end: segmentEnd,
+                                        type: 'paid',
+                                        description: `付费停车 ${Math.round(paidMinutes)} 分钟 (${paidHours * 4}元)`
+                                    });
+                                }
                             }
                         } else {
-                            // 第一段直接付费
-                            const paidTime = segmentEnd - segmentStart;
-                            const paidHours = Math.ceil(paidTime / 60);
+                            // 第一段，直接付费
+                            const paidMinutes = segmentEnd - segmentStart;
+                            const paidHours = Math.ceil(paidMinutes / 60);
                             totalCost += paidHours * 4;
                             schedule.push({
                                 start: segmentStart,
                                 end: segmentEnd,
                                 type: 'paid',
-                                description: `付费停车 ${paidHours} 小时 (${paidHours * 4}元)`
+                                description: `付费停车 ${Math.round(paidMinutes)} 分钟 (${paidHours * 4}元)`
                             });
                         }
                     }
